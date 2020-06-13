@@ -1,27 +1,15 @@
 import React, { Component } from "react";
-import UserData from "./userdata";
-import {connect} from "react-redux";
-import {Users,CreateUser} from "../action/useraction"
-class UserForm extends Component{
+import { connect } from "react-redux";
+import {UpdateUser} from "../action/useraction";
+class  UpdateData extends Component{
     constructor(props){
-        console.log(props);
         super(props);
         this.state={
-            username:"",
-            comments:"",
-            // allData:{}
+             comments:this.props.user.comments,
+             username:this.props.user.username,
+           // allData:{}
         }
     }
-componentDidMount=()=>{
-    this.props.Users();
-    if(!this.props.user)
-    {return this.props.history.push("/login")}
-   
-    // database.on('value',snapshot=>{
-    //     console.log(snapshot);
-    //     this.setState({allData:snapshot.val()})
-//     // })
-}
 
 handleInputData=(e)=>{
 this.setState({[e.target.name]:e.target.value})
@@ -33,17 +21,12 @@ handleFormData=(e)=>{
         username:this.state.username,
         comments:this.state.comments
     }
-    if(!this.props.user){return alert("'please login!!")}
-    this.props.CreateUser(data);
-   // database.push(data); 
-    this.setState({username:"",comments:""});
-  
+    this.props.UpdateUser(this.props.match.params.id,data);
+    this.props.history.push("/home");
 }
     render(){
-         
-    
+        console.log(this.props)
         return(
-
             <div className="container" style={{marginTop:"20px"}}>
                 <div className="row">
                     <div className="col-md-5">
@@ -60,13 +43,17 @@ handleFormData=(e)=>{
                         </form>
                     </div>
                 </div>
-                <UserData />
+                
             </div>
         )
     }
 }
-const mapStateToProps = state =>{
+
+const mapStateToProps=(state,ownProps)=>{
+    
+    console.log(ownProps);
     console.log(state);
-    return {user:state.auth};
+    return {user:state.users.data[ownProps.match.params.id]};
 }
-export default connect(mapStateToProps,{Users,CreateUser})(UserForm);
+
+export default connect(mapStateToProps,{UpdateUser})(UpdateData);
